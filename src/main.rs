@@ -1,9 +1,20 @@
 use std::io;
 use std::io::{Write};
+use console::{Alignment, pad_str, style};
 use rand::Rng;
 
 fn main() {
-    println!("Welcome to Rave!");
+    println!("Welcome to {}!", style("Rave").red());
+
+    print!("{}", style(pad_str("Attribute", 15, Alignment::Left, None)).black().on_white());
+    println!("{}", style(pad_str("Amount", 15, Alignment::Left, None)).black().on_white());
+
+    print!("{}", pad_str("Strength", 15, Alignment::Left, None));
+    println!("{}", pad_str("17", 15, Alignment::Left, None));
+
+    print!("{}", pad_str("Stamina", 15, Alignment::Left, None));
+    println!("{}", pad_str("20", 15, Alignment::Left, None));
+
     let mut character = Character::create_character();
     println!("Created character: {:#?}", character);
     Encounter::start_encounter(&mut character);
@@ -30,7 +41,6 @@ impl Character {
         io::stdin().read_line(&mut name).expect("Failed to read line");
 
         println!("You have {} attribute points to spend", attribute_points_to_spend);
-
         let mut parsed_stamina: i32;
 
         loop {
