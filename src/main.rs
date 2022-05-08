@@ -1,5 +1,6 @@
 use std::io;
 use std::io::{Write};
+use rand::Rng;
 
 fn main() {
     println!("Welcome to Rave!");
@@ -11,6 +12,7 @@ fn main() {
 struct Character {
     name: String,
     money: i32,
+    stamina: i32,
     health: i32,
     strength: i32,
 }
@@ -18,7 +20,7 @@ struct Character {
 impl Character {
     fn create_character() -> Character {
         let mut name = String::new();
-        let mut health = String::new();
+        let mut stamina = String::new();
         let mut strength = String::new();
         let mut attribute_points_to_spend = 10;
 
@@ -28,20 +30,20 @@ impl Character {
 
         println!("You have {} attribute points to spend", attribute_points_to_spend);
 
-        let mut parsed_health: i32;
+        let mut parsed_stamina: i32;
 
         loop {
             print!("Enter health attribute:");
             io::stdout().flush().expect("Flush didn't work");
-            io::stdin().read_line(&mut health).expect("Failed to read line");
-            parsed_health = health.trim().parse().expect("Health is not a number");
+            io::stdin().read_line(&mut stamina).expect("Failed to read line");
+            parsed_stamina = stamina.trim().parse().expect("Health is not a number");
 
-            if parsed_health <= attribute_points_to_spend {
-                attribute_points_to_spend -= parsed_health;
+            if parsed_stamina <= attribute_points_to_spend {
+                attribute_points_to_spend -= parsed_stamina;
                 break;
             } else {
                 println!("Entered health must be less than available attributes");
-                health.clear();
+                stamina.clear();
             }
         }
 
@@ -65,8 +67,35 @@ impl Character {
         return Character {
             name: String::from(name.trim()),
             money: 0,
-            health: parsed_health,
+            stamina: parsed_stamina,
             strength: parsed_strength,
+            health: stamina * 10,
         };
+    }
+}
+
+struct Enemy {
+    stamina: i32,
+    health: i32,
+    strength: i32,
+    gold: i32,
+}
+
+impl Enemy {
+    fn resolve_attack(&mut self, character: &mut Character) {
+        self.health -= character.strength * (rand::thread_rng().gen_range(1..11) / 10);
+
+        if self.health <= 0 {
+            return;
+        }
+    }
+}
+
+struct Encounter {}
+
+impl Encounter {
+    fn start_encounter() {
+        //spawn enemy
+        //call resolve attack on enemy until enemy dies
     }
 }
