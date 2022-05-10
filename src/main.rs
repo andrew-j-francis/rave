@@ -22,9 +22,7 @@ fn main() {
                 .child(TextView::new("Strength"))
                 .child(
                     LinearLayout::horizontal()
-                        .child(
-                            TextView::new("0").with_name("strength_amount")
-                        )
+                        .child(TextView::new("0").with_name("strength_amount"))
                         .child(DummyView.fixed_width(1))
                         .child(
                             SliderView::horizontal(11)
@@ -54,7 +52,7 @@ fn main() {
                 .fixed_width(30),
         )
             .title("Create Character")
-            .button("Quit", |s| s.quit())
+            .button("Create", |s| s.quit())
             .h_align(HAlign::Left),
     );
 
