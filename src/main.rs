@@ -2,15 +2,63 @@ mod character;
 
 use std::io;
 use std::io::{Write};
-use console::{Alignment, pad_str, style};
 use rand::Rng;
+use cursive::views::{CircularFocus, Dialog, DummyView, EditView, LinearLayout, SliderView, TextView};
+use cursive::{Cursive, View, With};
+use cursive::align::HAlign;
+use cursive::reexports::log::warn;
+use cursive::view::{Nameable, Resizable, Scrollable};
 
 fn main() {
-    println!("Welcome to {}!", style("Rave").red());
+    let mut siv = cursive::default();
+    siv.load_toml(include_str!("style.toml")).unwrap();
 
-    let mut character = character::create_character();
-    println!("Created character: {:#?}", character);
-    Encounter::start_encounter(&mut character);
+    siv.add_layer(
+        Dialog::around(
+            LinearLayout::vertical()
+                .child(TextView::new("Character Name"))
+                .child(EditView::new())
+                .child(DummyView.fixed_height(1))
+                .child(TextView::new("Strength"))
+                .child(
+                    LinearLayout::horizontal()
+                        .child(
+                            TextView::new("0").with_name("strength_amount")
+                        )
+                        .child(DummyView.fixed_width(1))
+                        .child(
+                            SliderView::horizontal(11)
+                                .on_change(|s, v| {
+                                    s.call_on_name("strength_amount", |view: &mut TextView| {
+                                        view.set_content(v.to_string());
+                                    });
+                                })
+                        )
+                )
+                .child(TextView::new("Stamina"))
+                .child(
+                    LinearLayout::horizontal()
+                        .child(
+                            TextView::new("0").with_name("stamina_amount")
+                        )
+                        .child(DummyView.fixed_width(1))
+                        .child(
+                            SliderView::horizontal(11)
+                                .on_change(|s, v| {
+                                    s.call_on_name("stamina_amount", |view: &mut TextView| {
+                                        view.set_content(v.to_string());
+                                    });
+                                })
+                        )
+                )
+                .fixed_width(30),
+        )
+            .title("Create Character")
+            .button("Quit", |s| s.quit())
+            .h_align(HAlign::Left),
+    );
+
+    siv.run();
 }
 
 struct Encounter {}
@@ -37,13 +85,6 @@ impl Encounter {
 
         let enemy_attack_power = enemy.strength * 10;
         let character_attack_power = character.strength * 10;
-
-        println!("********** New Encounter **********");
-        print!("{}", style(pad_str("Health", 15, Alignment::Left, None)).black().on_white());
-        println!("{}", style(pad_str("Attack Power", 15, Alignment::Left, None)).black().on_white());
-
-        print!("{}", pad_str(&enemy_health.to_string(), 15, Alignment::Left, None));
-        println!("{}", pad_str(&enemy_attack_power.to_string(), 15, Alignment::Left, None));
 
         println!("********** Combat Log **********");
         loop {

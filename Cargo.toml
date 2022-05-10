@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.3"
-console = "0.15.0"
-clicolors-control = "1.0.1"
+cursive = { version = "0.18.0", default-features = false, features = ["crossterm-backend", "toml"] }
+crossterm = "0.23.2"
