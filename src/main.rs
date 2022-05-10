@@ -17,7 +17,7 @@ fn main() {
         Dialog::around(
             LinearLayout::vertical()
                 .child(TextView::new("Character Name"))
-                .child(EditView::new())
+                .child(EditView::new().with_name("character_name"))
                 .child(DummyView.fixed_height(1))
                 .child(TextView::new("Strength"))
                 .child(
@@ -52,11 +52,26 @@ fn main() {
                 .fixed_width(30),
         )
             .title("Create Character")
-            .button("Create", |s| s.quit())
+            .button("Create", |s| {
+                let character_name = s.call_on_name("character_name", |view: &mut EditView| {
+                    view.get_content().to_string()
+                });
+
+                let stamina = s.call_on_name("stamina_amount", |view: &mut SliderView| {
+                    view.get_value()
+                });
+
+                test(&character_name.unwrap(), &stamina.unwrap());
+            })
             .h_align(HAlign::Left),
     );
 
     siv.run();
+}
+
+fn test(character_name: &String, stamina: &usize) {
+    println!("{}", character_name);
+    println!("{}", stamina);
 }
 
 struct Encounter {}
